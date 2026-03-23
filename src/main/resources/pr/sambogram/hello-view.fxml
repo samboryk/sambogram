@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane styleClass="root" stylesheets="@style.css" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/17.0.12" fx:controller="pr.sambogram.Controller">
+    <padding>
+        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+    </padding>
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15">
+            <padding><Insets bottom="15" /></padding>
+            <ImageView fitHeight="35" fitWidth="160" preserveRatio="true">
+                <Image url="@SAMBOGRAM.png" />
+            </ImageView>
+            <Region HBox.hgrow="ALWAYS" />
+            <VBox alignment="CENTER_RIGHT">
+                <Label fx:id="statusLabel" style="-fx-text-fill: #f44336; -fx-font-weight: bold;" text="Offline" />
+                <Label fx:id="userLabel" style="-fx-text-fill: #757575; -fx-font-size: 11px;" text="Disconnected" />
+            </VBox>
+            <Button fx:id="settingsButton" onAction="#showConnectDialog" style="-fx-background-color: transparent; -fx-cursor: hand;" />
+        </HBox>
+    </top>
+
+    <center>
+        <TextArea fx:id="logArea" editable="false" style="-fx-text-fill: white;" wrapText="true" VBox.vgrow="ALWAYS" />
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" spacing="10">
+            <padding><Insets top="15" /></padding>
+            <TextField fx:id="messageField" onKeyPressed="#onKeyPressed" prefHeight="48" promptText="Напишіть повідомлення..." HBox.hgrow="ALWAYS" />
+            <Button fx:id="sendButton" onAction="#onSendButtonClick" prefHeight="48" prefWidth="110" text="Send" />
+        </HBox>
+    </bottom>
+</BorderPane>

@@ -1,0 +1,52 @@
+.root {
+    -fx-background-color: #1E1E1E;
+}
+
+.text-area {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 5;
+}
+
+.text-area .content {
+    -fx-background-color: #252525;
+    -fx-background-radius: 12;
+    -fx-border-color: #333333;
+    -fx-border-radius: 12;
+}
+
+.text-area .text {
+    -fx-fill: #FFFFFF !important;
+    -fx-font-size: 14px;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+.text-field {
+    -fx-background-color: #2A2A2A;
+    -fx-text-fill: white;
+    -fx-background-radius: 8;
+    -fx-border-color: #333333;
+    -fx-padding: 10;
+}
+
+.text-field:focused {
+    -fx-border-color: #3842EF;
+}
+
+.button {
+    -fx-background-color: #3842EF;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+}
+
+.button:hover {
+    -fx-background-color: #4A54F5;
+}
+
+.custom-dialog {
+    -fx-background-color: #1E1E1E;
+}
+.custom-dialog .label {
+    -fx-text-fill: white;
+}
