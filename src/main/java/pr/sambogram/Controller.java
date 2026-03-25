@@ -11,11 +11,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 public class Controller {
@@ -29,22 +28,12 @@ public class Controller {
     private Socket socket;
     private PrintWriter out;
     private String username = "User";
-    private final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
     @FXML
     public void initialize() {
         logArea.textProperty().addListener((obs, oldVal, newVal) -> {
             Platform.runLater(() -> logArea.setScrollTop(Double.MAX_VALUE));
         });
-
-        try {
-            ImageView iconView = new ImageView(new Image(getClass().getResourceAsStream("LOGO.png")));
-            iconView.setFitHeight(18);
-            iconView.setFitWidth(18);
-            settingsButton.setGraphic(iconView);
-            settingsButton.setText("");
-        } catch (Exception e) { }
-
         Platform.runLater(this::showConnectDialog);
     }
 
@@ -61,13 +50,6 @@ public class Controller {
         content.setAlignment(Pos.CENTER);
         content.setPadding(new Insets(20));
 
-        try {
-            ImageView logoView = new ImageView(new Image(getClass().getResourceAsStream("LOGO.png")));
-            logoView.setFitHeight(70);
-            logoView.setFitWidth(70);
-            content.getChildren().add(logoView);
-        } catch (Exception e) { }
-
         Label title = new Label("Sambogram Hub");
         title.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: white;");
 
@@ -77,10 +59,12 @@ public class Controller {
         TextField ip = new TextField("localhost");
         TextField port = new TextField("8080");
         TextField name = new TextField(username);
+        PasswordField pass = new PasswordField();
 
         grid.add(new Label("IP:"), 0, 0); grid.add(ip, 1, 0);
         grid.add(new Label("Port:"), 0, 1); grid.add(port, 1, 1);
         grid.add(new Label("Name:"), 0, 2); grid.add(name, 1, 2);
+        grid.add(new Label("Pass:"), 0, 3); grid.add(pass, 1, 3);
 
         content.getChildren().addAll(title, grid);
         dialogPane.setContent(content);
@@ -88,26 +72,31 @@ public class Controller {
         ButtonType loginBtn = new ButtonType("Connect", ButtonBar.ButtonData.OK_DONE);
         dialogPane.getButtonTypes().addAll(loginBtn, ButtonType.CANCEL);
 
-        dialog.setResultConverter(btn -> btn == loginBtn ? new String[]{ip.getText(), port.getText(), name.getText()} : null);
+
+        dialog.setResultConverter(btn -> btn == loginBtn ?
+                new String[]{ip.getText(), port.getText(), name.getText(), pass.getText()} : null);
 
         Optional<String[]> result = dialog.showAndWait();
         result.ifPresent(data -> {
             this.username = data[2];
-            userLabel.setText("Active: " + username);
-            connectToServer(data[0], Integer.parseInt(data[1]));
+            String password = data[3];
+            connectToServer(data[0], Integer.parseInt(data[1]), this.username, password);
         });
     }
 
-    private void connectToServer(String host, int port) {
+    private void connectToServer(String host, int port, String user, String pass) {
         new Thread(() -> {
             try {
                 socket = new Socket(host, port);
                 out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream(), StandardCharsets.UTF_8), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream(), StandardCharsets.UTF_8));
 
+                out.println("AUTH:" + user + ":" + pass);
+
                 Platform.runLater(() -> {
                     statusLabel.setText("Online");
                     statusLabel.setStyle("-fx-text-fill: #3842EF; -fx-font-weight: bold;");
+                    userLabel.setText("Active: " + username);
                 });
 
                 String msg;
@@ -127,8 +116,7 @@ public class Controller {
     @FXML
     protected void onSendButtonClick() {
         if (out != null && !messageField.getText().isEmpty()) {
-            String time = LocalTime.now().format(timeFormatter);
-            out.println("[" + time + "] " + username + ": " + messageField.getText());
+            out.println("MSG:" + messageField.getText());
             messageField.clear();
         }
     }
